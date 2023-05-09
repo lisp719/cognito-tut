@@ -1,6 +1,9 @@
 services:
   node:
     image: node:lts
+    command: npm run dev -- --host
+    ports:
+      - 5173:5173
     user: node
     volumes:
       - .:/workspace
