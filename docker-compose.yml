@@ -1,0 +1,7 @@
+services:
+  node:
+    image: node:lts
+    user: node
+    volumes:
+      - .:/workspace
+    working_dir: /workspace
