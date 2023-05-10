@@ -1,35 +1,51 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { Amplify, Auth } from "aws-amplify";
+
+import "./App.css";
+
+const config = {
+  Auth: {
+    region: import.meta.env.VITE_REGION,
+    userPoolId: import.meta.env.VITE_USER_POOL_ID,
+    userPoolWebClientId: import.meta.env.VITE_USER_POOL_WEB_CLIENT_ID,
+    cookieStorage: {
+      domain: import.meta.env.VITE_COOKIE_STORAGE_DOMAIN,
+    },
+    oauth: {
+      domain: import.meta.env.VITE_OAUTH_DOMAIN,
+      scope: ["email", "openid", "profile"],
+      redirectSignIn: import.meta.env.VITE_OAUTH_REDIRECT_SIGN_IN,
+      redirectSignOut: import.meta.env.VITE_OAUTH_REDIRECT_SIGN_OUT,
+      responseType: "code",
+    },
+  },
+};
+
+Amplify.configure(config);
 
 function App() {
-  const [count, setCount] = useState(0)
+  const handleSignIn = () => {
+    Auth.federatedSignIn();
+  };
+
+  const handleCurrentUser = async () => {
+    const user = await Auth.currentAuthenticatedUser();
+    console.log(user);
+  };
+
+  const handleSignOut = () => {
+    Auth.signOut();
+  };
 
   return (
     <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
       <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
+      <div>
+        <button onClick={handleSignIn}>Sign In</button>
+        <button onClick={handleSignOut}>Sign Out</button>
+        <button onClick={handleCurrentUser}>Current User</button>
       </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
     </>
-  )
+  );
 }
 
-export default App
+export default App;
